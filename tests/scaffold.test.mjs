@@ -23,7 +23,9 @@ test('all seven business areas have stable navigation keys', () => {
   }
 });
 
-test('bootstrap does not implement a fake sign-in', () => {
+test('sign-in is real and clinical routes require server session', () => {
   const routes = readFileSync(new URL('../src/app/app.routes.ts', import.meta.url), 'utf8');
-  assert.doesNotMatch(routes, /login|auth\/callback|fake-session/);
+  assert.match(routes, /path: 'login'/);
+  assert.match(routes, /canActivate: \[authGuard/);
+  assert.doesNotMatch(routes, /fake-session|selectedRole/);
 });
