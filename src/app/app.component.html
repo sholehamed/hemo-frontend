@@ -1,33 +1,46 @@
 <div class="app-shell">
-  <aside class="sidebar" [class.open]="menuOpen()" aria-label="ناوبری اصلی">
-    <a class="brand" routerLink="/" (click)="closeMenu()">
-      <span class="brand-mark" aria-hidden="true">🩸</span>
-      <span><strong>Hemo</strong><small>سامانه هموویژیلانس</small></span>
-    </a>
-    <p class="sidebar-caption">بخش‌های سامانه</p>
-    <nav aria-label="حوزه‌های Hemo">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()">نمای کلی</a>
-      @for (area of areas; track area.id) {
-        <a [routerLink]="['/areas', area.id]" routerLinkActive="active" (click)="closeMenu()">
-          <span aria-hidden="true">{{ area.icon }}</span> {{ area.title }}
-        </a>
-      }
-    </nav>
-    <div class="sidebar-bottom">
-      <a routerLink="/system/status" routerLinkActive="active" (click)="closeMenu()">وضعیت اتصال API</a>
-      <p>مرحله اول · بدون احراز هویت</p>
-    </div>
-  </aside>
-  @if (menuOpen()) {
-    <button class="backdrop" type="button" aria-label="بستن منو" (click)="closeMenu()"></button>
+  @if (auth.isSignedIn()) {
+    <aside class="sidebar" [class.open]="menuOpen()" aria-label="ناوبری اصلی">
+      <a class="brand" routerLink="/" (click)="closeMenu()">
+        <span class="brand-mark" aria-hidden="true">🩸</span>
+        <span><strong>Hemo</strong><small>سامانه هموویژیلانس</small></span>
+      </a>
+      <p class="sidebar-caption">بخش‌های مجاز حساب</p>
+      <nav aria-label="حوزه‌های Hemo">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
+          (click)="closeMenu()">نمای کلی</a>
+        @for (area of visibleAreas(); track area.id) {
+          <a [routerLink]="['/areas', area.id]" routerLinkActive="active" (click)="closeMenu()">
+            <span aria-hidden="true">{{ area.icon }}</span> {{ area.title }}
+          </a>
+        }
+      </nav>
+      <div class="sidebar-bottom">
+        <a routerLink="/system/status" routerLinkActive="active" (click)="closeMenu()">وضعیت اتصال API</a>
+        <p>{{ auth.session()?.displayName }}</p>
+        <button class="logout-button" type="button" [disabled]="loggingOut()" (click)="logout()">
+          {{ loggingOut() ? 'در حال خروج…' : 'خروج از حساب' }}
+        </button>
+      </div>
+    </aside>
+    @if (menuOpen()) {
+      <button class="backdrop" type="button" aria-label="بستن منو" (click)="closeMenu()"></button>
+    }
   }
   <div class="workspace">
     <header class="topbar">
-      <button class="menu-toggle" type="button" aria-label="باز و بسته کردن منو" [attr.aria-expanded]="menuOpen()" (click)="toggleMenu()">☰</button>
-      <div><strong>Hemo</strong><span> / زیرساخت مستقل</span></div>
-      <span class="stage-label">Stage 1</span>
+      @if (auth.isSignedIn()) {
+        <button class="menu-toggle" type="button" aria-label="باز و بسته کردن منو"
+          [attr.aria-expanded]="menuOpen()" (click)="toggleMenu()">☰</button>
+      }
+      <div><strong>Hemo</strong><span> / سامانه هموویژیلانس</span></div>
+      @if (auth.isSignedIn()) {
+        <span class="stage-label">{{ auth.session()?.displayName }}</span>
+      } @else {
+        <a routerLink="/login" class="text-link">ورود</a>
+      }
     </header>
     <main class="content"><router-outlet /></main>
-    <footer>Hemo · {{ currentYear }} · فاقد عملیات بالینی در این مرحله</footer>
+    <footer>Hemo · {{ currentYear }} · دسترسی بالینی هنوز فعال نشده است</footer>
   </div>
 </div>

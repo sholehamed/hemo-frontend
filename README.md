@@ -1,12 +1,10 @@
 # Hemo Frontend
 
-Independent Angular 22 app (Persian / RTL). **No Foundation dependencies.** This is Stage 1 infrastructure, not a functioning clinical system.
-
-## Requirements
-
-Node.js 24.15.0 (or Angular 22-compatible Node.js >=22.22.3), npm.
+Independent Angular 22 + ASP.NET Core BFF frontend, Persian/RTL.
 
 ## Run
+
+Requires Node 24.15.0 or Angular-compatible version. Start backend on localhost:5080, then:
 
 ```bash
 npm install
@@ -15,19 +13,15 @@ npm run check
 npm start
 ```
 
-Then open `http://localhost:4200`. The dev-server proxies `/api` and `/health` to the Hemo backend at `http://localhost:5080`. The `/system/status` screen shows real backend connectivity without exposing sensitive configuration.
+Browse http://localhost:4200. Angular proxies /api and /health to localhost:5080.
 
-## What's included
+## Authentication
 
-- Angular standalone / zoneless / lazy routes
-- Persian RTL responsive shell with seven Hemo area placeholders
-- Relative HttpClient service for the API system-status endpoint
-- Static smoke tests and GitHub Actions build checks
+- Routes /login and /system/status are public; dashboard and area routes require backend session.
+- GET /api/v1/auth/csrf provisions anti-CSRF cookie; login/logout use it on relative API POSTs.
+- The HttpOnly cookie remains in the browser; frontend never stores an access token.
+- Role-based area navigation reflects backend scope assignments but is **not authorization**.
+- Stage 2A assumes SQL Server baseline and explicit System Administrator bootstrap; no demo credentials.
+- No clinical features or real patient data are processed.
 
-## Not yet included
-
-- Real login, BFF, roles or authorizations
-- Patient data, blood requests, crossmatch, transfusion or HIS integration
-- Transferred Hemo-raw pages, workflow validations or clinical rules
-
-See `docs/ADR-0001-frontend.md`; backend is in `sholehamed/hemo-backend`. Never commit credentials or patient data.
+See docs/ADR-0001-frontend.md and docs/ADR-0002-frontend-auth.md.
