@@ -1,5 +1,7 @@
 # Hemo Frontend
 
+> 📚 **نقشه راه رسمی کل Hemo (Backend + Frontend):** [مرکز مستندات پروژه](https://github.com/sholehamed/hemo-backend/tree/main/docs) — شامل همه مراحل و ماتریس ۶۲ صفحه. راهنمای محلی Frontend: [docs/PROJECT_HANDOFF_FA.md](docs/PROJECT_HANDOFF_FA.md). این ریپو نقشه راه مستقل و متناقض ندارد.
+
 Independent Angular 22 + ASP.NET Core BFF frontend, Persian/RTL.
 
 ## Run
