@@ -27,3 +27,17 @@ Browse http://localhost:4200. Angular proxies /api and /health to localhost:5080
 - No clinical features or real patient data are processed.
 
 See docs/ADR-0001-frontend.md and docs/ADR-0002-frontend-auth.md.
+
+
+## ST-04 browser end-to-end tests
+
+The separate [Hemo ST-04 Browser E2E](https://github.com/sholehamed/hemo-frontend/actions/workflows/admission-browser-e2e.yml)
+workflow installs an isolated SQL Server 2022, checks out the matching Hemo backend
+from `main`, executes its full database/auth fixture, starts ASP.NET Core and
+Angular, then uses real Chromium to verify login, a new synthetic admission,
+page reload, wristband issuance, matching two identifiers and searching the
+persisted record.
+
+These tests establish the technical vertical slice, **not** clinical readiness.
+Official patient identification SOPs, a clinically approved scannable wristband,
+MFA/account policy and security/UAT review remain outstanding.
