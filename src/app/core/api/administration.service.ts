@@ -19,6 +19,9 @@ export class AdministrationService {
   addDepartment(facilityId: number, code: string, name: string): Observable<OrgItem> {
     return this.http.post<OrgItem>(this.org + '/departments', { facilityId, code, name, parentDepartmentId: null });
   }
+  addBed(departmentId: number, bedCode: string): Observable<OrgItem> {
+    return this.http.post<OrgItem>(this.org + '/beds', { departmentId, bedCode });
+  }
   listUsers(): Observable<ManagedUser[]> { return this.http.get<ManagedUser[]>(this.users + '/'); }
   getRoles(): Observable<HemoRole[]> { return this.http.get<HemoRole[]>(this.users + '/roles'); }
   addUser(userName: string, displayName: string, initialPassword: string): Observable<ManagedUser> {

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { areaGuard, authGuard } from './core/auth/auth.guard';
 import { systemAdminGuard } from './core/auth/system-admin.guard';
+import { admissionGuard } from './core/auth/admission.guard';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,34 @@ export const routes: Routes = [
     canActivate: [authGuard, systemAdminGuard],
     loadComponent: () => import('./features/admin/admin.component')
       .then(m => m.AdminComponent)
+  },
+  {
+    path: 'admission',
+    title: 'Hemo | پذیرش',
+    canActivate: [authGuard, admissionGuard],
+    loadComponent: () => import('./features/admission/admission-dashboard.component')
+      .then(m => m.AdmissionDashboardComponent)
+  },
+  {
+    path: 'admission/new',
+    title: 'Hemo | پذیرش بیمار',
+    canActivate: [authGuard, admissionGuard],
+    loadComponent: () => import('./features/admission/admission-create.component')
+      .then(m => m.AdmissionCreateComponent)
+  },
+  {
+    path: 'admission/list',
+    title: 'Hemo | پرونده‌های پذیرش',
+    canActivate: [authGuard, admissionGuard],
+    loadComponent: () => import('./features/admission/admission-list.component')
+      .then(m => m.AdmissionListComponent)
+  },
+  {
+    path: 'admission/identity/:facilityId/:departmentId/:encounterId',
+    title: 'Hemo | تطبیق هویت',
+    canActivate: [authGuard, admissionGuard],
+    loadComponent: () => import('./features/admission/admission-identity.component')
+      .then(m => m.AdmissionIdentityComponent)
   },
   {
     path: 'system/status',

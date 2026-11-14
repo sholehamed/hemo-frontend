@@ -30,6 +30,15 @@ import { RequestStateComponent } from '../../shared/components/request-state.com
             <li>{{ facility.name }} <small>({{ facility.code }})</small></li>
           }
         </ul>
+        <h3>ایجاد تخت</h3>
+        <form (ngSubmit)="createBed()">
+          <label>شناسه بخش
+            <input name="bedDept" type="number" [(ngModel)]="bedDepartmentId"
+              required min="1" placeholder="شناسه بخش ثبت‌شده" />
+          </label>
+          <label>کد تخت <input name="bedCode" [(ngModel)]="bedCode" required maxlength="30" /></label>
+          <button class="primary-button" [disabled]="busy() || bedDepartmentId === null">ثبت تخت</button>
+        </form>
         <h3>افزودن بخش</h3>
         <form (ngSubmit)="createDepartment()">
           <label>مرکز
@@ -119,6 +128,7 @@ export class AdminComponent implements OnInit {
   readonly users = signal<ManagedUser[]>([]);
   readonly roles = signal<HemoRole[]>([]);
   facilityCode = ''; facilityName = '';
+  bedDepartmentId: number | null = null; bedCode = '';
   departmentCode = ''; departmentName = ''; departmentFacility: number | null = null;
   userName = ''; displayName = ''; password = '';
   grantUser: number | null = null; grantRoleId: number | null = null; grantFacility: number | null = null;
@@ -151,6 +161,11 @@ export class AdminComponent implements OnInit {
     this.run(() => this.api.addDepartment(this.departmentFacility!,
       this.departmentCode.trim(), this.departmentName.trim()),
       () => { this.departmentCode = ''; this.departmentName = ''; });
+  }
+  createBed(): void {
+    if (this.bedDepartmentId === null) return;
+    this.run(() => this.api.addBed(this.bedDepartmentId!, this.bedCode.trim()),
+      () => { this.bedCode = ''; });
   }
   createUser(): void {
     const userName = this.userName.trim();

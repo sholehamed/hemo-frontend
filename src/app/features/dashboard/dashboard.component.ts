@@ -20,7 +20,7 @@ import { HEMO_AREAS } from '../../core/navigation/areas';
     <h2>حوزه‌های سامانه</h2>
     <div class="area-grid">
       @for (area of visibleAreas(); track area.id) {
-        <a class="area-card" [routerLink]="['/areas', area.id]">
+        <a class="area-card" [routerLink]="area.id === 'admission' ? ['/admission'] : ['/areas', area.id]">
           <span class="area-icon" aria-hidden="true">{{ area.icon }}</span>
           <strong>{{ area.title }}</strong>
           <span class="muted">{{ area.subtitle }}</span>

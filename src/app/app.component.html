@@ -10,7 +10,7 @@
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
           (click)="closeMenu()">نمای کلی</a>
         @for (area of visibleAreas(); track area.id) {
-          <a [routerLink]="['/areas', area.id]" routerLinkActive="active" (click)="closeMenu()">
+          <a [routerLink]="area.id === 'admission' ? ['/admission'] : ['/areas', area.id]" routerLinkActive="active" (click)="closeMenu()">
             <span aria-hidden="true">{{ area.icon }}</span> {{ area.title }}
           </a>
         }
