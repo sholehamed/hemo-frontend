@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { areaGuard, authGuard } from './core/auth/auth.guard';
+import { systemAdminGuard } from './core/auth/system-admin.guard';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,13 @@ export const routes: Routes = [
     canActivate: [authGuard, areaGuard],
     loadComponent: () => import('./features/area/area.component')
       .then(m => m.AreaComponent)
+  },
+  {
+    path: 'admin',
+    title: 'Hemo | مدیریت سامانه',
+    canActivate: [authGuard, systemAdminGuard],
+    loadComponent: () => import('./features/admin/admin.component')
+      .then(m => m.AdminComponent)
   },
   {
     path: 'system/status',
