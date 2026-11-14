@@ -42,6 +42,7 @@ export class AuthService {
   login(userName: string, password: string): Observable<HemoSession> {
     return this.http.get<void>('/api/v1/auth/csrf').pipe(
       switchMap(() => this.http.post<void>('/api/v1/auth/login', { userName, password })),
+      switchMap(() => this.http.get<void>('/api/v1/auth/csrf')),
       switchMap(() => this.http.get<HemoSession>('/api/v1/auth/session')),
       tap(session => {
         this.session.set(session);
@@ -58,6 +59,12 @@ export class AuthService {
         this.initialized.set(true);
       })
     );
+  }
+
+  canManageSystem(): boolean {
+    return (this.session()?.grants ?? []).some(grant =>
+      grant.roleCode === 'SYSTEM_ADMIN' && grant.facilityId === null &&
+      grant.departmentId === null && grant.permissions.includes('users.manage'));
   }
 
   hasRole(role: string): boolean {

@@ -16,6 +16,9 @@
         }
       </nav>
       <div class="sidebar-bottom">
+        @if (auth.canManageSystem()) {
+          <a routerLink="/admin" routerLinkActive="active" (click)="closeMenu()">مدیریت سامانه</a>
+        }
         <a routerLink="/system/status" routerLinkActive="active" (click)="closeMenu()">وضعیت اتصال API</a>
         <p>{{ auth.session()?.displayName }}</p>
         <button class="logout-button" type="button" [disabled]="loggingOut()" (click)="logout()">
