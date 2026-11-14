@@ -44,6 +44,10 @@ export class AdmissionsService {
   departments(facility: number): Observable<OrgItem[]> {
     return this.http.get<OrgItem[]>(`/api/v1/organization/facilities/${facility}/departments`);
   }
+  beds(facility: number, department: number): Observable<OrgItem[]> {
+    return this.http.get<OrgItem[]>(
+      `/api/v1/organization/facilities/${facility}/departments/${department}/beds`);
+  }
   list(facility: number, department: number, search: string, page = 1): Observable<AdmissionPage> {
     const params = new HttpParams().set('page', page).set('search', search);
     return this.http.get<AdmissionPage>(this.root(facility, department) + '/', { params });
