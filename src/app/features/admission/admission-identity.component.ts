@@ -1,3 +1,9 @@
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -9,104 +15,149 @@ import { isoToJalali, jalaliToIso } from '../../shared/jalali-date';
 @Component({
   selector: 'app-admission-identity',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, RequestStateComponent],
+  imports: [ReactiveFormsModule, RouterLink, RequestStateComponent,
+    MatButtonModule, MatCardModule, MatCheckboxModule,
+    MatFormFieldModule, MatInputModule, MatSelectModule],
   template: `
-    <section class="heading"><p class="eyebrow">Admission / Identity</p>
+    <section class="heading"><p class="eyebrow">ADMISSION / IDENTITY</p>
       <h1>پرونده بستری و کنترل هویت</h1>
-      <p class="muted">تطبیق هویت باید در کنار بیمار و با رعایت دستورالعمل مرکز انجام شود.</p>
+      <p class="muted">کنترل هویت در کنار بیمار و با رعایت دستورالعمل مصوب مرکز انجام شود.</p>
     </section>
-    <app-request-state [loading]="busy()" [error]="error()" [traceId]="traceId()"/>
+    <app-request-state [loading]="busy()" [error]="error()" [traceId]="traceId()" />
     @if (record(); as patient) {
-      <section class="record-card">
-        <h2>اطلاعات بیمار</h2>
-        <dl>
-          <dt>شناسه بستری</dt><dd>{{ patient.encounterId }}</dd>
-          <dt>نام</dt><dd>{{ patient.firstName }} {{ patient.lastName }}</dd>
-          <dt>کد ملی/شناسه ناشناس</dt>
-          <dd>{{ patient.nationalId ?? patient.unknownIdentityCode }}</dd>
-          <dt>تاریخ تولد</dt><dd>{{ jalali(patient.birthDate) || 'ثبت نشده' }}</dd>
-          <dt>تاریخ پذیرش</dt><dd>{{ jalali(patient.admittedAt) }}</dd>
-          <dt>وضعیت</dt><dd>{{ patient.status }}</dd>
-        </dl>
-      </section>
+      <div class="identity-grid">
+        <mat-card class="record-card">
+          <mat-card-header><mat-card-title>اطلاعات بیمار</mat-card-title></mat-card-header>
+          <mat-card-content>
+            <dl>
+              <dt>شناسه بستری</dt><dd>{{ patient.encounterId }}</dd>
+              <dt>نام</dt><dd>{{ patient.firstName }} {{ patient.lastName }}</dd>
+              <dt>کد ملی/شناسه ناشناس</dt>
+              <dd dir="ltr">{{ patient.nationalId ?? patient.unknownIdentityCode }}</dd>
+              <dt>تاریخ تولد</dt><dd>{{ jalali(patient.birthDate) || 'ثبت نشده' }}</dd>
+              <dt>تاریخ پذیرش</dt><dd>{{ jalali(patient.admittedAt) }}</dd>
+              <dt>وضعیت</dt><dd><span class="status-pill">{{ patient.status }}</span></dd>
+            </dl>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="record-card">
+          <mat-card-header><mat-card-title>مچ‌بند و شناسه رهگیری</mat-card-title></mat-card-header>
+          <mat-card-content>
+            <p class="muted">صدور شناسه در سامانه، تضمین چاپ یا اسکن صحیح روی تجهیزات بیمارستانی نیست.</p>
+            @if (patient.activeBarcode; as barcode) {
+              <div id="wristband" class="wristband" dir="ltr">
+                <strong>HEMO</strong><span>{{ barcode }}</span>
+                <small>{{ patient.firstName }} {{ patient.lastName }} · {{ patient.encounterId }}</small>
+              </div>
+              <button mat-stroked-button type="button" (click)="printBand()">چاپ مچ‌بند</button>
+            } @else {
+              <button mat-flat-button class="primary-button" type="button" [disabled]="busy()"
+                (click)="issueBand()">صدور بارکد مچ‌بند</button>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
 
-      <section class="record-card">
-        <h2>مچ‌بند و بارکد</h2>
-        <p class="muted">بارکد توسط سرور صادر می‌شود. صدور به معنی موفقیت چاپ فیزیکی نیست.</p>
-        @if (patient.activeBarcode; as barcode) {
-          <div id="wristband" class="wristband" dir="ltr">
-            <strong>HEMO</strong><span>{{ barcode }}</span>
-            <small>{{ patient.firstName }} {{ patient.lastName }} · {{ patient.encounterId }}</small>
-          </div>
-          <button class="primary-button" type="button" (click)="printBand()">چاپ مچ‌بند</button>
-        } @else {
-          <button class="primary-button" type="button" [disabled]="busy()" (click)="issueBand()">
-            صدور بارکد مچ‌بند
-          </button>
-        }
-      </section>
+      <mat-card class="record-card verify-card">
+        <mat-card-header><mat-card-title>تطبیق دو شناسه بیمار</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="muted">اسکن مچ‌بند و تطبیق شناسه‌ها را با اطلاعات حضوری بررسی کنید.</p>
+          <form class="form-grid" [formGroup]="verifyForm" (ngSubmit)="verify()">
+            <mat-form-field appearance="outline">
+              <mat-label>بارکد اسکن‌شده</mat-label>
+              <input matInput formControlName="barcode" required autocomplete="off" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>شناسه اول (کد ملی یا شناسه ناشناس)</mat-label>
+              <input matInput formControlName="firstIdentifier" required autocomplete="off" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>شناسه دوم (نام کامل)</mat-label>
+              <input matInput formControlName="secondIdentifier" required autocomplete="off" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>دلیل مغایرت</mat-label>
+              <textarea matInput formControlName="mismatchReason" maxlength="800" rows="2"></textarea>
+            </mat-form-field>
+            <mat-checkbox class="full" formControlName="checklistConfirmed">
+              کنترل‌های حضوری هویت انجام شده‌اند
+            </mat-checkbox>
+            <div class="page-actions full">
+              <button mat-flat-button class="primary-button" type="submit"
+                [disabled]="busy() || !patient.activeBarcode">ثبت نتیجه تطبیق</button>
+            </div>
+          </form>
+          @if (verification(); as result) {
+            <div class="result-banner" [class.mismatch]="result.status !== 'Verified'" role="status">
+              {{ result.status === 'Verified' ? 'تطبیق هویت ثبت شد.' :
+                'مغایرت هویتی ثبت شد؛ ادامه فرایند نیازمند بررسی مسئول مربوط است.' }}
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
 
-      <section class="record-card">
-        <h2>تطبیق دو شناسه بیمار</h2>
-        <p class="muted">مقادیر را از مچ‌بند و فرایند تأیید هویت وارد کنید؛ سیستم مطابقت را با پرونده ثبت‌شده بررسی می‌کند.</p>
-        <form [formGroup]="verifyForm" (ngSubmit)="verify()">
-          <label>بارکد اسکن‌شده <input formControlName="barcode" required autocomplete="off" /></label>
-          <label>شناسه اول (کد ملی یا شناسه ناشناس)
-            <input formControlName="firstIdentifier" required autocomplete="off" />
-          </label>
-          <label>شناسه دوم (نام کامل بیمار)
-            <input formControlName="secondIdentifier" required autocomplete="off" />
-          </label>
-          <label>دلیل مغایرت (در صورت وجود)
-            <textarea formControlName="mismatchReason" maxlength="800" rows="2"></textarea>
-          </label>
-          <label class="check-label"><input type="checkbox" formControlName="checklistConfirmed" />
-            کنترل‌های حضوری هویت انجام شده‌اند
-          </label>
-          <button class="primary-button" type="submit" [disabled]="busy() || !patient.activeBarcode">
-            ثبت نتیجه تطبیق
-          </button>
-        </form>
-        @if (verification(); as result) {
-          <p class="notice" [class.mismatch]="result.status !== 'Verified'" role="status">
-            {{ result.status === 'Verified' ? 'تطبیق هویت ثبت شد.' :
-              'مغایرت هویتی ثبت شد؛ ادامه فرایند نیازمند بررسی مسئول مربوط است.' }}
-          </p>
-        }
-      </section>
-
-      <section class="record-card">
-        <h2>اصلاح مشخصات عمومی</h2>
-        <p class="muted">تغییرات با RowVersion کنترل می‌شوند؛ ویرایش هم‌زمان با خطای تعارض رد می‌شود.</p>
-        <form [formGroup]="editForm" (ngSubmit)="updatePatient()">
-          <label>نام <input formControlName="firstName" required /></label>
-          <label>نام خانوادگی <input formControlName="lastName" required /></label>
-          <label>نام پدر <input formControlName="fatherName" /></label>
-          <label>تاریخ تولد شمسی <input formControlName="birthDateJalali" placeholder="۱۳۶۵/۰۲/۱۴" /></label>
-          <label>جنسیت <select formControlName="sex">
-            <option value="U">نامشخص</option><option value="M">مرد</option><option value="F">زن</option>
-          </select></label>
-          <label>شماره تماس <input formControlName="mobile" /></label>
-          <button class="primary-button" type="submit" [disabled]="busy()">ذخیره اصلاحات</button>
-        </form>
-      </section>
-      <p><a [routerLink]="['/admission/list']" [queryParams]="{facilityId,departmentId}"
-        class="text-link">بازگشت به فهرست</a></p>
+      <mat-card class="record-card">
+        <mat-card-header><mat-card-title>اصلاح مشخصات عمومی</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="muted">ویرایش هم‌زمان توسط RowVersion مدیریت می‌شود.</p>
+          <form [formGroup]="editForm" (ngSubmit)="updatePatient()" class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>نام</mat-label><input matInput formControlName="firstName" required />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>نام خانوادگی</mat-label><input matInput formControlName="lastName" required />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>نام پدر</mat-label><input matInput formControlName="fatherName" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>تاریخ تولد شمسی</mat-label>
+              <input matInput formControlName="birthDateJalali" placeholder="۱۳۶۵/۰۲/۱۴" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>جنسیت</mat-label>
+              <mat-select formControlName="sex">
+                <mat-option value="U">نامشخص</mat-option><mat-option value="M">مرد</mat-option>
+                <mat-option value="F">زن</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>شماره تماس</mat-label>
+              <input matInput formControlName="mobile" />
+            </mat-form-field>
+            <div class="full page-actions">
+              <button mat-flat-button class="primary-button" type="submit"
+                [disabled]="busy()">ذخیره اصلاحات</button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+      <div class="page-actions">
+        <a mat-button [routerLink]="['/admission/list']"
+          [queryParams]="{facilityId,departmentId}">بازگشت به فهرست</a>
+      </div>
     }
   `,
   styles: [`
-    .record-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px;margin-bottom:18px}
-    dl{display:grid;grid-template-columns:minmax(130px,180px) 1fr;gap:8px}
-    dt{color:#64748b}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
-    form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-    label{display:grid;gap:4px;font-weight:600;font-size:13px}
-    input,select,textarea{padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}
-    .check-label{display:flex;flex-direction:row;align-items:center;gap:8px;grid-column:1/-1}
-    .wristband{display:flex;gap:5px;flex-direction:column;border:2px dashed #64748b;
-      border-radius:10px;padding:15px;margin:10px 0;width:max-content;max-width:100%;overflow-wrap:anywhere}
-    .wristband span{font-family:monospace;letter-spacing:1px}
-    .mismatch{background:#fff1f2;color:#a11a2b}
-    @media print{.record-card:not(:has(#wristband)),.heading,button,a,footer,aside,header{display:none!important}
+    .identity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:17px}
+    .record-card{margin-bottom:18px;overflow:hidden}
+    mat-card-title{font-size:18px;font-weight:800}
+    mat-card-content{padding-top:18px!important}
+    dl{display:grid;grid-template-columns:minmax(110px,165px) minmax(0,1fr);gap:10px;margin:0}
+    dt{color:#64748b;font-size:12px}
+    dd{margin:0;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+    .status-pill{background:#e1f2e9;color:#216d4a;padding:5px 10px;border-radius:20px}
+    .wristband{display:flex;flex-direction:column;gap:6px;border:2px dashed #9aa7b9;
+      border-radius:10px;padding:16px;margin:14px 0;max-width:100%;overflow-wrap:anywhere;background:#fafcff}
+    .wristband span{font:700 14px monospace;letter-spacing:1px}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(235px,100%),1fr));gap:11px 17px}
+    .full{grid-column:1/-1}
+    .result-banner{padding:14px 18px;background:#e3f5ea;border:1px solid #afdec1;
+      color:#146b42;border-radius:10px;font-weight:700}
+    .result-banner.mismatch{background:#fff1f2;border-color:#ffd0d4;color:#a11a2b}
+    @media(max-width:620px){dl{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}}
+    @media print{.heading,button,a,.verify-card{display:none!important}
+      .record-card:not(:has(#wristband)){display:none!important}
       .wristband{border:1px solid #000}}
   `]
 })
