@@ -14,9 +14,10 @@
 ## وضعیت کد Frontend
 - ST-01: Angular 22 Standalone، responsive RTL، Shell، ۷ حوزه و route status، Build/test در CI: **Done**.
 - ST-02A: فرم login، Session از API، logout، XSRF، area guards و نمایش منو از role grants: **Done**.
-- ST-02B و ST-03: Error contract/interceptor، form components، profile/security/permission views: **Not started**.
-- ST-04 تا ST-13: انتقال قابلیت‌های ۶۲ صفحه به Angular با API واقعی: **Not started**.
-- **نکته:** هیچ صفحه بالینی یا داشبورد نمونه موجود را «عملیاتی» تلقی نکن؛ role filtering در UI جای Authorization سمت Backend نیست.
+- ST-02B: Error contract/interceptor و request states: **Merged**. ST-03: پنل مدیریت حساب/مرکز و نقش: **Merged**؛ MFA، reset، lockout و password-first-change هنوز باز.
+- ST-04: چهار صفحه اصلی پذیرش به Angular + API واقعی وصل شده‌اند؛ CI Build/Smoke و Browser E2E با SQL Server آزمایشی سبز؛ SOP و سخت‌سازی امنیت پیش از بهره‌برداری هنوز باز. **PR #6 under review**.
+- ST-05 تا ST-13: هنوز شروع نشده‌اند.
+- **نکته:** UI پذیرش ST-04 دارای عملیات SQL واقعی است ولی با وجود سبزشدن Browser E2E، تا تکمیل سخت‌سازی امنیت و امضای SOP نباید به‌عنوان آماده بهره‌برداری بالینی معرفی شود؛ role filtering در UI جای Authorization سمت Backend نیست.
 
 ## قرارداد Frontend برای هر Feature
 1. صفحه/فرایند را با `hemo-raw` تطبیق بده. اگر دو HTML کار یکسان دارند، canonical route مشخص شود؛ دو Component با داده تکراری نساز.

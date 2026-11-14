@@ -16,5 +16,7 @@ export const areaGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const router = inject(Router);
   const area = findArea(route.paramMap.get('id'));
   if (!area) return router.createUrlTree(['/']);
-  return auth.canShowArea(area.roleCode) ? true : router.createUrlTree(['/']);
+  return auth.checkSession().pipe(map(session => !session
+    ? router.createUrlTree(['/login'])
+    : auth.canShowArea(area.roleCode) ? true : router.createUrlTree(['/'])));
 };
