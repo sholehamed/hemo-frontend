@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { areaGuard, authGuard } from './core/auth/auth.guard';
 import { systemAdminGuard } from './core/auth/system-admin.guard';
 import { admissionGuard } from './core/auth/admission.guard';
+import { clinicalGuard } from './core/auth/clinical.guard';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,13 @@ export const routes: Routes = [
     canActivate: [authGuard, areaGuard],
     loadComponent: () => import('./features/area/area.component')
       .then(m => m.AreaComponent)
+  },
+  {
+    path: 'clinical/requests',
+    title: 'Hemo | درخواست خون و تأیید پزشک',
+    canActivate: [authGuard, clinicalGuard],
+    loadComponent: () => import('./features/clinical/blood-requests.component')
+      .then(m => m.BloodRequestsComponent)
   },
   {
     path: 'admin',
