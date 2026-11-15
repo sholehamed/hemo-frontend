@@ -191,7 +191,8 @@ import { isoToJalali } from '../../shared/jalali-date';
       </mat-card>
     }
   }
-  <p><a mat-button routerLink="/">بازگشت به نمای کلی</a></p>
+  <p><a mat-button routerLink="/logistics">تحویل و لجستیک</a>
+    <a mat-button routerLink="/">بازگشت به نمای کلی</a></p>
  `,
  styles:[`
    .scope,.work-card{margin-bottom:18px;overflow:hidden}

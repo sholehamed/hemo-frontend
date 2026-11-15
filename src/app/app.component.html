@@ -25,6 +25,11 @@
             <span class="nav-emoji">⚙</span> مدیریت سامانه
           </a>
         }
+        @if (auth.hasRole('NURSE') || auth.hasRole('BLOOD_TRANSFUSION_EXPERT') || auth.hasRole('SUPERVISOR')) {
+          <a mat-list-item routerLink="/logistics" routerLinkActive="active" (click)="closeMenu()">
+            <span class="nav-emoji" aria-hidden="true">🚚</span> صدور و لجستیک
+          </a>
+        }
         <a mat-list-item routerLink="/system/status" routerLinkActive="active" (click)="closeMenu()">
           <span class="nav-emoji">◉</span> وضعیت سرویس
         </a>
