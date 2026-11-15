@@ -35,6 +35,11 @@
             <span class="nav-emoji" aria-hidden="true">🩺</span> تزریق و پایش
           </a>
         }
+        @if (auth.hasRole('NURSE') || auth.hasRole('DOCTOR') || auth.hasRole('HV_MANAGER')) {
+          <a mat-list-item routerLink="/reactions" routerLinkActive="active" (click)="closeMenu()">
+            <span class="nav-emoji" aria-hidden="true">⚕</span> واکنش‌ها و RCA
+          </a>
+        }
         <a mat-list-item routerLink="/system/status" routerLinkActive="active" (click)="closeMenu()">
           <span class="nav-emoji">◉</span> وضعیت سرویس
         </a>
