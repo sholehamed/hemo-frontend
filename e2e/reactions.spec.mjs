@@ -27,8 +27,15 @@ test('ST09: HV worklist includes independently verified RCA and event status',as
   await page.goto('/login');
   await page.locator('#username').fill('st09_hv');
   await page.locator('#password').fill('HvFirst-Ci_2026-Str0ng!');
+  const loginResult=page.waitForResponse(response =>
+    response.url().includes('/api/v1/auth/login') &&
+    response.request().method()==='POST');
   await page.getByRole('button',{name:'ورود',exact:true}).click();
+  const signedIn=await loginResult;
+  expect(signedIn.status(),'HV fixture login must complete before navigation').toBe(204);
+  await expect(page.getByRole('heading',{name:'سامانه یکپارچه هموویژیلانس'})).toBeVisible();
   await page.goto('/reactions');
+  await expect(page.getByRole('heading',{name:'واکنش‌های نامطلوب و پیگیری'})).toBeVisible();
   await page.getByRole('combobox',{name:'مرکز درمانی'}).click();
   await page.getByRole('option',{name:'Hospital A'}).click();
   await page.getByRole('combobox',{name:'بخش درمانی'}).click();

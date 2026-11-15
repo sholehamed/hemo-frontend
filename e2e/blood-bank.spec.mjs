@@ -22,7 +22,7 @@ test('ST06 browser: bank specialist can see scoped stock and register an expirin
   await page.getByRole('option',{name:'O+'}).click();
   await page.getByRole('textbox',{name:'تاریخ انقضا شمسی'}).fill('۱۴۰۶/۰۱/۰۱');
   await page.getByRole('button',{name:'ثبت دریافت'}).click();
-  await expect(page.getByRole('status')).toContainText('عملیات در پایگاه داده ثبت شد');
+  await expect(page.locator('.notice')).toContainText('عملیات در پایگاه داده ثبت شد');
   await expect(page.locator('table').first()).toContainText('ST06-BROWSER-002');
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2);
   expect(overflow).toBeFalsy();
