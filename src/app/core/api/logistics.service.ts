@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 export interface IssueView {
   readonly id: number; readonly unitId: number; readonly unitCode: string;
   readonly requestId: number; readonly departmentId: number; readonly status: string;
-  readonly issuedAt: string; readonly rowVersion: string;
+  readonly issuedAt: string; readonly rowVersion: string; readonly receivedByUserId: number | null;
 }
 export interface DispatchView {
   readonly id: number; readonly issueId: number; readonly status: string;
