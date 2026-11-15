@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { areaGuard, authGuard } from './core/auth/auth.guard';
 import { systemAdminGuard } from './core/auth/system-admin.guard';
 import { admissionGuard } from './core/auth/admission.guard';
+import { transfusionGuard } from './core/auth/transfusion.guard';
 import { logisticsWorkspaceGuard } from './core/auth/logistics.guard';
 import { bloodBankGuard } from './core/auth/blood-bank.guard';
 import { clinicalGuard } from './core/auth/clinical.guard';
@@ -47,6 +48,13 @@ export const routes: Routes = [
     canActivate: [authGuard,logisticsWorkspaceGuard],
     loadComponent: () => import('./features/logistics/logistics-workspace.component')
       .then(m => m.LogisticsWorkspaceComponent)
+  },
+  {
+    path: 'transfusions',
+    title: 'Hemo | تزریق و پایش',
+    canActivate: [authGuard,transfusionGuard],
+    loadComponent: () => import('./features/transfusion/transfusion-workspace.component')
+      .then(m => m.TransfusionWorkspaceComponent)
   },
   {
     path: 'admin',
