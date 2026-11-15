@@ -1,3 +1,5 @@
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SystemStatus, SystemStatusService } from '../../core/api/system-status.service';
@@ -5,13 +7,14 @@ import { SystemStatus, SystemStatusService } from '../../core/api/system-status.
 @Component({
   selector: 'app-system-status',
   standalone: true,
+  imports: [MatButtonModule, MatCardModule],
   template: `
     <section class="heading">
       <p class="eyebrow">System</p>
       <h1>وضعیت اتصال API</h1>
       <p class="muted">این بررسی، وضعیت API را نشان می‌دهد؛ سلامت SQL Server در مسیر جداگانه /health/ready ارزیابی می‌شود.</p>
     </section>
-    <button type="button" class="primary-button" (click)="refresh()">بررسی مجدد اتصال</button>
+    <button mat-flat-button type="button" class="primary-button" (click)="refresh()">بررسی مجدد اتصال</button>
     @if (busy()) {
       <p role="status" class="notice">در حال بررسی ارتباط با API…</p>
     } @else if (error()) {
@@ -20,12 +23,12 @@ import { SystemStatus, SystemStatusService } from '../../core/api/system-status.
         <span>{{ error() }}</span>
       </div>
     } @else if (status(); as current) {
-      <dl class="status-card">
+      <mat-card><mat-card-content><dl class="status-card">
         <dt>سرویس</dt><dd>{{ current.service }}</dd>
         <dt>وضعیت</dt><dd>{{ current.status }}</dd>
         <dt>زمان UTC</dt><dd>{{ current.utcTime }}</dd>
         <dt>شناسه رهگیری</dt><dd><code dir="ltr">{{ current.traceId }}</code></dd>
-      </dl>
+      </dl></mat-card-content></mat-card>
     }
   `
 })

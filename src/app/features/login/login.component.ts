@@ -2,46 +2,73 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, MatButtonModule, MatCardModule,
+    MatFormFieldModule, MatInputModule, MatProgressSpinnerModule],
   template: `
-    <section class="login-wrap">
-      <div class="login-card">
-        <p class="eyebrow">Hemo / حساب کاربری</p>
-        <h1>ورود به سامانه هموویژیلانس</h1>
-        <p class="muted">ورود با حساب کاربری معتبر تعریف‌شده در پایگاه داده Hemo</p>
-        <form (ngSubmit)="submit()">
-          <label for="username">نام کاربری</label>
-          <input id="username" name="userName" [(ngModel)]="userName"
-            required autocomplete="username" maxlength="100" />
-          <label for="password">رمز عبور</label>
-          <input id="password" type="password" name="password"
-            [(ngModel)]="password" required autocomplete="current-password" />
-          @if (error()) {
-            <p class="form-error" role="alert">{{ error() }}</p>
-          }
-          <button class="primary-button submit" type="submit" [disabled]="busy()">
-            {{ busy() ? 'در حال بررسی…' : 'ورود' }}
-          </button>
-        </form>
-        <p class="muted help">برای ایجاد حساب یا بازیابی دسترسی با مدیر سامانه تماس بگیرید.</p>
-        <a routerLink="/system/status" class="text-link">بررسی وضعیت اتصال سرویس</a>
-      </div>
-    </section>
+    <div class="login-layout">
+      <section class="welcome-panel">
+        <div class="welcome-mark" aria-hidden="true">🩸</div>
+        <p class="eyebrow">HEMO · CLINICAL WORKSPACE</p>
+        <h2>اطلاعات دقیق، در دسترس افراد مجاز</h2>
+        <p>ورود یکپارچه به فضای کاری پذیرش، پرستاری، پزشکان و بانک خون با مجوزهای تعیین‌شده برای هر بخش.</p>
+        <div class="security-item">🔐 احراز هویت سمت سرور</div>
+        <div class="security-item">🏥 دسترسی محدود به مرکز و بخش</div>
+        <div class="security-item">⌁ رهگیری عملیات ثبت‌شده</div>
+      </section>
+      <mat-card class="login-card">
+        <mat-card-content>
+          <p class="eyebrow">ورود به حساب کاربری</p>
+          <h1>به Hemo خوش آمدید</h1>
+          <p class="muted">برای دسترسی به سامانه، اطلاعات حساب خود را وارد کنید.</p>
+          <form (ngSubmit)="submit()" autocomplete="on">
+            <mat-form-field appearance="outline">
+              <mat-label>نام کاربری</mat-label>
+              <input matInput id="username" name="userName" [(ngModel)]="userName"
+                required autocomplete="username" maxlength="100" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>رمز عبور</mat-label>
+              <input matInput id="password" type="password" name="password"
+                [(ngModel)]="password" required autocomplete="current-password" />
+            </mat-form-field>
+            @if (error()) { <p class="form-error" role="alert">{{ error() }}</p> }
+            <button mat-flat-button class="primary-button submit" type="submit"
+              [disabled]="busy()">
+              @if (busy()) {
+                <mat-spinner [diameter]="18" aria-label="در حال بررسی"></mat-spinner>
+                در حال بررسی…
+              } @else { ورود }
+            </button>
+          </form>
+          <p class="muted help">برای دریافت حساب یا بازیابی دسترسی، با مدیر سامانه تماس بگیرید.</p>
+          <a routerLink="/system/status" class="text-link">وضعیت اتصال سرویس</a>
+        </mat-card-content>
+      </mat-card>
+    </div>
   `,
   styles: [`
-    .login-wrap{min-height:64vh;display:grid;place-items:center}
-    .login-card{width:min(420px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:32px;box-shadow:0 14px 60px #1a324313}
-    h1{font-size:24px;margin:6px 0}
-    form{display:flex;flex-direction:column;gap:9px;margin-top:26px}
-    label{font-size:14px;font-weight:bold}
-    input{padding:11px 13px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;margin-bottom:8px}
-    input:focus{border-color:#317d85;outline:2px solid #a8d8db}
-    .submit{margin-top:8px}.help{margin-top:20px}.form-error{color:#b42334;font-size:13px}
+    .login-layout{min-height:calc(100dvh - 190px);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:clamp(25px,6vw,95px)}
+    .welcome-panel{padding:28px 16px}.welcome-panel h2{font-size:clamp(28px,3vw,43px);font-weight:900;line-height:1.5;margin:20px 0}
+    .welcome-panel p:not(.eyebrow){color:#63738b;font-size:15px;max-width:500px}
+    .welcome-mark{display:grid;place-items:center;width:72px;height:72px;border-radius:20px;font-size:33px;background:#fee1e9}
+    .security-item{margin-top:17px;padding:11px 16px;border-right:3px solid #b91c35;background:#fff;border-radius:8px;font-size:13px;color:#334155;max-width:400px}
+    .login-card{width:min(460px,100%);justify-self:center}
+    .login-card mat-card-content{padding:clamp(24px,4vw,40px)!important}
+    h1{font-size:29px;margin:5px 0}.login-card form{display:grid;gap:10px;margin:26px 0 0}
+    .submit{width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:12px}
+    .help{margin-top:22px;font-size:12px}.form-error{color:#a51c33;margin:0;font-size:13px}
+    @media(max-width:950px){.login-layout{grid-template-columns:1fr;gap:14px}.welcome-panel{display:none}.login-card{width:min(460px,100%);margin:30px 0}}
+    @media(max-width:470px){.login-layout{min-height:60dvh}.login-card mat-card-content{padding:20px!important}h1{font-size:24px}}
   `]
 })
 export class LoginComponent {
@@ -56,15 +83,11 @@ export class LoginComponent {
     if (!this.userName.trim() || !this.password || this.busy()) return;
     this.busy.set(true);
     this.error.set(null);
-
     this.auth.login(this.userName.trim(), this.password).pipe(
-      finalize(() => {
-        this.password = '';
-        this.busy.set(false);
-      })
+      finalize(() => { this.password = ''; this.busy.set(false); })
     ).subscribe({
       next: () => void this.router.navigateByUrl('/'),
-      error: () => this.error.set('ورود ناموفق بود. اطلاعات حساب و ارتباط با سرویس را بررسی کنید.')
+      error: () => this.error.set('ورود ناموفق بود. اطلاعات حساب و ارتباط سرویس را بررسی کنید.')
     });
   }
 }

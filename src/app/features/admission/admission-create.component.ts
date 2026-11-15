@@ -1,3 +1,9 @@
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -10,77 +16,109 @@ import { jalaliToIso, normalizeDigits } from '../../shared/jalali-date';
 @Component({
   selector: 'app-admission-create',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, RequestStateComponent],
+  imports: [ReactiveFormsModule, RouterLink, RequestStateComponent,
+    MatButtonModule, MatCardModule, MatCheckboxModule, MatFormFieldModule,
+    MatInputModule, MatSelectModule],
   template: `
     <section class="heading">
-      <p class="eyebrow">Admission / New</p>
+      <p class="eyebrow">Admission / New patient</p>
       <h1>پذیرش بیمار جدید</h1>
-      <p class="muted">اطلاعات این فرم در SQL Server ثبت می‌شود. شماره HIS بدون اتصال واقعی ساخته نخواهد شد.</p>
+      <p class="muted">تشکیل پرونده بیمار و ثبت بستری در پایگاه داده مرکز مجاز.</p>
     </section>
     <app-request-state [loading]="busy()" [error]="error()" [traceId]="traceId()" />
     <form [formGroup]="form" (ngSubmit)="submit()" class="admission-form">
-      <fieldset><legend>مشخصات بیمار</legend>
-        <label class="check-label">
-          <input type="checkbox" formControlName="isUnknown" />
-          بیمار مجهول‌الهویه
-        </label>
-        @if (!form.controls.isUnknown.value) {
-          <label>کد ملی <input formControlName="nationalId" inputmode="numeric"
-            maxlength="10" placeholder="۰۰۱۲۳۴۵۶۷۸" /></label>
-        } @else {
-          <p class="muted">سیستم شناسه ناشناس یکتا صادر می‌کند؛ نیازی به کد ملی نیست.</p>
-        }
-        <label>نام <input formControlName="firstName" maxlength="100" placeholder="نام" /></label>
-        <label>نام خانوادگی <input formControlName="lastName" maxlength="120" placeholder="نام خانوادگی" /></label>
-        <label>نام پدر <input formControlName="fatherName" maxlength="100" /></label>
-        <label>تاریخ تولد شمسی
-          <input formControlName="birthDateJalali" placeholder="۱۳۶۵/۰۲/۱۴" inputmode="numeric" />
-        </label>
-        <label>جنسیت
-          <select formControlName="sex">
-            <option value="U">نامشخص</option><option value="M">مرد</option><option value="F">زن</option>
-          </select>
-        </label>
-        <label>شماره تماس <input formControlName="mobile" inputmode="tel" maxlength="30" /></label>
-      </fieldset>
-      <fieldset><legend>مشخصات بستری</legend>
-        <label>نوع پذیرش
-          <select formControlName="admissionType">
-            <option value="Routine">عادی</option>
-            <option value="Emergency">اورژانسی</option>
-            <option value="Transfer">انتقالی</option>
-            <option value="Other">سایر</option>
-          </select>
-        </label>
-        <label>تخت (اختیاری)
-          <select formControlName="bedId">
-            <option value="">بدون تخصیص تخت</option>
-            @for (bed of beds(); track bed.id) {
-              <option [value]="bed.id">{{ bed.code }}</option>
+      <mat-card class="form-section">
+        <mat-card-header><mat-card-title><span class="step">۱</span> مشخصات بیمار</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <mat-checkbox formControlName="isUnknown" color="primary">بیمار مجهول‌الهویه</mat-checkbox>
+          <div class="form-grid">
+            @if (!form.controls.isUnknown.value) {
+              <mat-form-field appearance="outline">
+                <mat-label>کد ملی</mat-label>
+                <input matInput formControlName="nationalId" inputmode="numeric"
+                  maxlength="10" placeholder="۰۰۱۲۳۴۵۶۷۸" />
+                <mat-hint>۱۰ رقم، بدون خط تیره</mat-hint>
+              </mat-form-field>
+            } @else {
+              <p class="muted unknown-info">شناسه ناشناس یکتا توسط سرور تولید خواهد شد.</p>
             }
-          </select>
-        </label>
-        <label class="full">توضیحات پذیرش
-          <textarea formControlName="admissionNote" rows="3" maxlength="1000"></textarea>
-        </label>
-      </fieldset>
-      <div class="buttons">
-        <button class="primary-button" type="submit" [disabled]="busy()">
+            <mat-form-field appearance="outline">
+              <mat-label>نام</mat-label><input matInput formControlName="firstName" maxlength="100" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>نام خانوادگی</mat-label><input matInput formControlName="lastName" maxlength="120" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>نام پدر</mat-label><input matInput formControlName="fatherName" maxlength="100" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>تاریخ تولد شمسی</mat-label>
+              <input matInput formControlName="birthDateJalali" placeholder="۱۳۶۵/۰۲/۱۴" inputmode="numeric" />
+              <mat-hint>سال/ماه/روز؛ به ISO تبدیل می‌شود</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>جنسیت</mat-label>
+              <mat-select formControlName="sex">
+                <mat-option value="U">نامشخص</mat-option><mat-option value="M">مرد</mat-option>
+                <mat-option value="F">زن</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>شماره تماس</mat-label>
+              <input matInput formControlName="mobile" inputmode="tel" maxlength="30" />
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="form-section">
+        <mat-card-header><mat-card-title><span class="step">۲</span> اطلاعات بستری</mat-card-title></mat-card-header>
+        <mat-card-content class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>نوع پذیرش</mat-label>
+            <mat-select formControlName="admissionType">
+              <mat-option value="Routine">عادی</mat-option>
+              <mat-option value="Emergency">اورژانسی</mat-option>
+              <mat-option value="Transfer">انتقالی</mat-option>
+              <mat-option value="Other">سایر</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>تخت (اختیاری)</mat-label>
+            <mat-select formControlName="bedId">
+              <mat-option value="">بدون تخصیص تخت</mat-option>
+              @for (bed of beds(); track bed.id) {
+                <mat-option [value]="bed.id">{{ bed.code }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>توضیحات پذیرش</mat-label>
+            <textarea matInput formControlName="admissionNote" rows="3" maxlength="1000"></textarea>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+      <div class="page-actions">
+        <button mat-flat-button class="primary-button" type="submit" [disabled]="busy()">
           {{ busy() ? 'در حال ثبت…' : 'ثبت بیمار و بستری' }}
         </button>
-        <a routerLink="/admission" class="text-link">انصراف</a>
+        <a mat-stroked-button routerLink="/admission">انصراف</a>
       </div>
     </form>
   `,
   styles: [`
-    .admission-form{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:24px}
-    fieldset{border:0;margin:0 0 24px;padding:0;display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-    legend{font-weight:bold;font-size:19px;margin-bottom:14px}
-    label{font-weight:600;font-size:13px;display:flex;flex-direction:column;gap:5px}
-    input,select,textarea{padding:10px 12px;border:1px solid #ccd7e1;border-radius:8px;font:inherit;width:100%}
-    .check-label{flex-direction:row;align-items:center;gap:8px;grid-column:1/-1}
-    .check-label input{width:auto}.full{grid-column:1/-1}.buttons{display:flex;align-items:center;gap:18px}
+    .admission-form{display:grid;gap:19px}
+    .form-section{width:100%}
+    mat-card-title{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800}
+    mat-card-content{padding-top:20px!important}
+    .step{display:grid;place-items:center;background:#b91c35;color:white;font-size:13px;
+      width:28px;height:28px;border-radius:50%}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(245px,100%),1fr));gap:8px 18px}
+    mat-checkbox{display:block;margin:1px 0 20px}
+    .unknown-info{align-self:center}
+    .full{grid-column:1/-1}
+    .page-actions{margin-bottom:20px}
+    @media(max-width:650px){.form-grid{grid-template-columns:1fr}}
   `]
 })
 export class AdmissionCreateComponent implements OnInit {

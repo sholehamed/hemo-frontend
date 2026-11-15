@@ -1,49 +1,66 @@
-<div class="app-shell">
+<mat-sidenav-container class="app-shell" dir="rtl">
   @if (auth.isSignedIn()) {
-    <aside class="sidebar" [class.open]="menuOpen()" aria-label="ناوبری اصلی">
+    <mat-sidenav class="sidebar" [mode]="compact() ? 'over' : 'side'"
+      [opened]="!compact() || menuOpen()" (closedStart)="closeMenu()"
+      [fixedInViewport]="compact()" [autoFocus]="false" aria-label="ناوبری اصلی">
       <a class="brand" routerLink="/" (click)="closeMenu()">
         <span class="brand-mark" aria-hidden="true">🩸</span>
-        <span><strong>Hemo</strong><small>سامانه هموویژیلانس</small></span>
+        <span><strong>HEMO</strong><small>سامانه هموویژیلانس</small></span>
       </a>
-      <p class="sidebar-caption">بخش‌های مجاز حساب</p>
-      <nav aria-label="حوزه‌های Hemo">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
-          (click)="closeMenu()">نمای کلی</a>
+      <mat-divider />
+      <p class="nav-caption">حوزه‌های مجاز</p>
+      <mat-nav-list class="nav-list" aria-label="ماژول‌های Hemo">
+        <a mat-list-item routerLink="/" routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()">
+          <span class="nav-emoji">⌂</span> نمای کلی
+        </a>
         @for (area of visibleAreas(); track area.id) {
-          <a [routerLink]="area.id === 'admission' ? ['/admission'] : ['/areas', area.id]" routerLinkActive="active" (click)="closeMenu()">
-            <span aria-hidden="true">{{ area.icon }}</span> {{ area.title }}
+          <a mat-list-item [routerLink]="area.id === 'admission' ? ['/admission'] : ['/areas', area.id]"
+            routerLinkActive="active" (click)="closeMenu()">
+            <span class="nav-emoji" aria-hidden="true">{{ area.icon }}</span> {{ area.title }}
           </a>
         }
-      </nav>
-      <div class="sidebar-bottom">
         @if (auth.canManageSystem()) {
-          <a routerLink="/admin" routerLinkActive="active" (click)="closeMenu()">مدیریت سامانه</a>
+          <a mat-list-item routerLink="/admin" routerLinkActive="active" (click)="closeMenu()">
+            <span class="nav-emoji">⚙</span> مدیریت سامانه
+          </a>
         }
-        <a routerLink="/system/status" routerLinkActive="active" (click)="closeMenu()">وضعیت اتصال API</a>
-        <p>{{ auth.session()?.displayName }}</p>
-        <button class="logout-button" type="button" [disabled]="loggingOut()" (click)="logout()">
+        <a mat-list-item routerLink="/system/status" routerLinkActive="active" (click)="closeMenu()">
+          <span class="nav-emoji">◉</span> وضعیت سرویس
+        </a>
+      </mat-nav-list>
+      <div class="sidebar-bottom">
+        <mat-divider />
+        <div class="side-user">
+          <span class="user-avatar">{{ auth.session()?.displayName?.slice(0, 1) || 'H' }}</span>
+          <span><strong>{{ auth.session()?.displayName }}</strong>
+            <small>{{ auth.session()?.userName }}</small></span>
+        </div>
+        <button mat-stroked-button type="button" class="logout-button"
+          [disabled]="loggingOut()" (click)="logout()">
           {{ loggingOut() ? 'در حال خروج…' : 'خروج از حساب' }}
         </button>
       </div>
-    </aside>
-    @if (menuOpen()) {
-      <button class="backdrop" type="button" aria-label="بستن منو" (click)="closeMenu()"></button>
-    }
+    </mat-sidenav>
   }
-  <div class="workspace">
-    <header class="topbar">
-      @if (auth.isSignedIn()) {
-        <button class="menu-toggle" type="button" aria-label="باز و بسته کردن منو"
-          [attr.aria-expanded]="menuOpen()" (click)="toggleMenu()">☰</button>
+  <mat-sidenav-content class="workspace">
+    <mat-toolbar class="topbar">
+      @if (auth.isSignedIn() && compact()) {
+        <button mat-icon-button class="menu-toggle" type="button"
+          aria-label="باز و بسته کردن منو" [attr.aria-expanded]="menuOpen()"
+          (click)="toggleMenu()">☰</button>
       }
-      <div><strong>Hemo</strong><span> / سامانه هموویژیلانس</span></div>
+      <a routerLink="/" class="topbar-brand" aria-label="صفحه اصلی Hemo">
+        <span class="topbar-symbol">✚</span><strong>Hemo</strong><span>سامانه هموویژیلانس</span>
+      </a>
+      <span class="spacer"></span>
       @if (auth.isSignedIn()) {
         <span class="stage-label">{{ auth.session()?.displayName }}</span>
       } @else {
-        <a routerLink="/login" class="text-link">ورود</a>
+        <a mat-flat-button routerLink="/login">ورود</a>
       }
-    </header>
-    <main class="content"><router-outlet /></main>
-    <footer>Hemo · {{ currentYear }} · دسترسی بالینی هنوز فعال نشده است</footer>
-  </div>
-</div>
+    </mat-toolbar>
+    <main id="main-content" class="content"><router-outlet /></main>
+    <footer class="page-footer">Hemo · {{ currentYear }} · دسترسی به اطلاعات درمانی صرفاً برای کاربران مجاز</footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>
