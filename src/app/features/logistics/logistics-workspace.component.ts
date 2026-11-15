@@ -183,6 +183,7 @@ import { isoToJalali } from '../../shared/jalali-date';
       }
       <div class="page-actions">
         <button mat-stroked-button type="button" (click)="reload()">به‌روزرسانی</button>
+        <a mat-button routerLink="/transfusions">تزریق و پایش بخش</a>
         <a mat-button routerLink="/blood-bank">بازگشت به بانک خون</a>
       </div>
     }
