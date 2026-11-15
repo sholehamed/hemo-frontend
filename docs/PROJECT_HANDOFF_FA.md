@@ -16,7 +16,13 @@
 - ST-02A: فرم login، Session از API، logout، XSRF، area guards و نمایش منو از role grants: **Done**.
 - ST-02B: Error contract/interceptor و request states: **Merged**. ST-03: پنل مدیریت حساب/مرکز و نقش: **Merged**؛ MFA، reset، lockout و password-first-change هنوز باز.
 - ST-04: چهار صفحه اصلی پذیرش به Angular + API واقعی وصل شده‌اند؛ CI Build/Smoke و Browser E2E با SQL Server آزمایشی سبز؛ SOP و سخت‌سازی امنیت پیش از بهره‌برداری هنوز باز. **PR #6 merged; ST-04 technical delivery verified**.
-- ST-05 تا ST-13: هنوز شروع نشده‌اند.
+- ST-05: کارتابل مشترک درخواست و تصمیم مستقل پزشک، [PR #9](https://github.com/sholehamed/hemo-frontend/pull/9) با Build و SQL/Browser سبز.
+- ST-06: موجودی واحدها، رزرو و ثبت/بازبینی Crossmatch، [PR #10](https://github.com/sholehamed/hemo-frontend/pull/10) با تست‌های سبز؛ سازگاری پزشکی را UI محاسبه نمی‌کند.
+- ST-07: صدور واحد، حمل، دریافت بخش، برگشت/قرنطینه و تأیید مستقل، [PR #11](https://github.com/sholehamed/hemo-frontend/pull/11) Merge؛ Thaw/Transfers/Restock همچنان باز هستند.
+- ST-08: صفحه Angular Material `/transfusions`، ثبت علائم Base/During، چک‌لیست، Start/Stop/Complete و Signoff مستقل، [PR #12](https://github.com/sholehamed/hemo-frontend/pull/12) Merge؛ مرورگر/SQL سبز، SOP پزشکی باز.
+- ST-09: صفحه Angular Material `/reactions`، گزارش پرستار، ارزیابی پزشک، HV investigation و RCA/CAPA، [PR #13](https://github.com/sholehamed/hemo-frontend/pull/13) Merge؛ Angular CI و **Chromium 8/8** و SQL E2E موفق.
+- ST-10 تا ST-13: برنامه‌ریزی؛ تجهیزات/زنجیره سرد، QC، HIS/گزارش و hardening هنوز توسعه نیافته‌اند.
+- **گیت انتشار:** ثبت اطلاعات درمانی نیازمند تأیید مستقل SOP/کمیته بالینی، hardening امنیت، UAT و تجهیزات اسکن/مانیتورینگ است. سبزبودن تست‌ها مجوز بهره‌برداری واقعی نیست.
 - **نکته:** UI پذیرش ST-04 دارای عملیات SQL واقعی است ولی با وجود سبزشدن Browser E2E، تا تکمیل سخت‌سازی امنیت و امضای SOP نباید به‌عنوان آماده بهره‌برداری بالینی معرفی شود؛ role filtering در UI جای Authorization سمت Backend نیست.
 
 ## قرارداد Frontend برای هر Feature
