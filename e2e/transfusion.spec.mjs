@@ -17,7 +17,7 @@ test('ST-08 mobile: signed clinical transfusion displays immutable monitoring ti
   await page.getByRole('option',{name:'ICU A'}).click();
   await expect(page.locator('table').first()).toContainText('Completed');
   await page.getByRole('button',{name:'پایش و اقدامات'}).first().click();
-  await expect(page.getByText('ثبت‌شده',{exact:true}).first()).toBeVisible();
+  await expect(page.locator('.status-grid span.done')).toHaveCount(3);
   await expect(page.locator('table').last()).toContainText('Baseline');
   await expect(page.locator('table').last()).toContainText('During');
   await expect(page.getByRole('button',{name:'ثبت علائم حیاتی'})).toHaveCount(0);
