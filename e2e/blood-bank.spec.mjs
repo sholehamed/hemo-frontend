@@ -12,7 +12,9 @@ test('ST06 browser: bank specialist can see scoped stock and register an expirin
   await page.getByRole('combobox',{name:'مرکز درمانی'}).click();
   await page.getByRole('option',{name:'Hospital A'}).click();
   await expect(page.locator('table').first()).toContainText('ST06-BLOOD-001');
-  await expect(page.locator('table').last()).toContainText('Final');
+  // ST-07 consumes the active reservation at issue and ST-08 later completes it.
+  // It no longer belongs to the active bank worklist, but stays in stock history.
+  await expect(page.locator('table').last().locator('tbody tr')).toHaveCount(0);
   await page.getByRole('textbox',{name:'کد یکتای واحد'}).fill('ST06-BROWSER-002');
   await page.getByRole('combobox',{name:'نوع فرآورده'}).click();
   await page.getByRole('option',{name:'گلبول قرمز متراکم'}).click();
