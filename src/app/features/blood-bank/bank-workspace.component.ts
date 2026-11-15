@@ -186,6 +186,7 @@ import { jalaliToIso, isoToJalali } from '../../shared/jalali-date';
       }
       <div class="page-actions">
         <button mat-stroked-button type="button" (click)="refresh()">به‌روزرسانی فهرست‌ها</button>
+        <a mat-button routerLink="/logistics">صدور و لجستیک</a>
         <a mat-button routerLink="/clinical/requests">بازگشت به درخواست‌های خون</a>
       </div>
     }
