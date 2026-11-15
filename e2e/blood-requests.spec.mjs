@@ -15,7 +15,7 @@ async function selectScope(page) {
   await page.getByRole('option', { name: 'Hospital A' }).click();
   await page.getByRole('combobox', { name: 'بخش', exact: true }).click();
   await page.getByRole('option', { name: 'ICU A' }).click();
-  await expect(page.getByRole('heading', { name: 'کارتابل مشترک درخواست‌ها' })).toBeVisible();
+  await expect(page.getByText('کارتابل مشترک درخواست‌ها', { exact: true })).toBeVisible();
 }
 
 // Frontend workflow uses the same disposable SQL fixture as backend CI.
