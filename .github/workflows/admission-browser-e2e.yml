@@ -52,6 +52,9 @@ jobs:
         run: |
           set -euo pipefail
           export ASPNETCORE_ENVIRONMENT=Development
+          # Production default is eight logins/minute. This disposable browser fixture
+          # signs in multiple independent clinical roles in one minute.
+          export Security__LoginPermitLimit=24
           export ASPNETCORE_URLS="http://127.0.0.1:5080"
           export ConnectionStrings__Hemo="Server=127.0.0.1,14333;Database=Hemo;User Id=sa;Password=$HEMO_CI_SQL_PASSWORD;Encrypt=True;TrustServerCertificate=True;Connect Timeout=3"
           (cd backend && nohup dotnet run --no-build -c Release --no-launch-profile --project src/Hemo.Api > /tmp/hemo-browser-api.log 2>&1 < /dev/null &)
