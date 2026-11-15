@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { areaGuard, authGuard } from './core/auth/auth.guard';
 import { systemAdminGuard } from './core/auth/system-admin.guard';
 import { admissionGuard } from './core/auth/admission.guard';
+import { reactionGuard } from './core/auth/reaction.guard';
 import { transfusionGuard } from './core/auth/transfusion.guard';
 import { logisticsWorkspaceGuard } from './core/auth/logistics.guard';
 import { bloodBankGuard } from './core/auth/blood-bank.guard';
@@ -55,6 +56,13 @@ export const routes: Routes = [
     canActivate: [authGuard,transfusionGuard],
     loadComponent: () => import('./features/transfusion/transfusion-workspace.component')
       .then(m => m.TransfusionWorkspaceComponent)
+  },
+  {
+    path: 'reactions',
+    title: 'Hemo | واکنش‌های نامطلوب و RCA',
+    canActivate: [authGuard,reactionGuard],
+    loadComponent: () => import('./features/reactions/reactions-workspace.component')
+      .then(m => m.ReactionsWorkspaceComponent)
   },
   {
     path: 'admin',

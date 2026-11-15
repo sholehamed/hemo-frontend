@@ -215,6 +215,7 @@ import { isoToJalali } from '../../shared/jalali-date';
       }
       <div class="page-actions">
         <button mat-stroked-button type="button" (click)="reload()">بارگذاری مجدد</button>
+        <a mat-button routerLink="/reactions">گزارش و پیگیری واکنش</a>
         <a mat-button routerLink="/logistics">تحویل و لجستیک</a>
       </div>
     }
