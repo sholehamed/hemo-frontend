@@ -15,7 +15,7 @@
           <span class="nav-emoji">⌂</span> نمای کلی
         </a>
         @for (area of visibleAreas(); track area.id) {
-          <a mat-list-item [routerLink]="area.id === 'admission' ? ['/admission'] : ['/areas', area.id]"
+          <a mat-list-item [routerLink]="area.id === 'admission' ? ['/admission'] : ['nursing','doctor','blood-bank','supervisor'].includes(area.id) ? ['/clinical/requests'] : ['/areas', area.id]"
             routerLinkActive="active" (click)="closeMenu()">
             <span class="nav-emoji" aria-hidden="true">{{ area.icon }}</span> {{ area.title }}
           </a>

@@ -29,7 +29,7 @@ import { HEMO_AREAS } from '../../core/navigation/areas';
       @for (area of visibleAreas(); track area.id) {
         <mat-card class="area-card">
           <a class="area-card-link"
-            [routerLink]="area.id === 'admission' ? ['/admission'] : ['/areas', area.id]">
+            [routerLink]="area.id === 'admission' ? ['/admission'] : ['nursing','doctor','blood-bank','supervisor'].includes(area.id) ? ['/clinical/requests'] : ['/areas', area.id]">
             <span class="area-icon" aria-hidden="true">{{ area.icon }}</span>
             <strong>{{ area.title }}</strong>
             <span class="muted">{{ area.subtitle }}</span>
